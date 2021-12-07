@@ -24,3 +24,5 @@ soft:
     # token有效时长为7天，单位是秒
     expire: 604800
     header: token
+server:
+  port: 8081
