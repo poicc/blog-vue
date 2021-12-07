@@ -3,6 +3,7 @@ package com.soft.blog.api.config;
 
 import com.soft.blog.api.shiro.AccountRealm;
 import com.soft.blog.api.shiro.JwtFilter;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
@@ -13,12 +14,10 @@ import org.crazycake.shiro.RedisCacheManager;
 import org.crazycake.shiro.RedisSessionDAO;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.apache.shiro.mgt.SecurityManager;
 
 import javax.annotation.Resource;
 import javax.servlet.Filter;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -56,10 +55,10 @@ public class ShiroConfig {
     @Bean
     public ShiroFilterChainDefinition shiroFilterChainDefinition() {
         DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
-        Map<String, String> filterMap = new LinkedHashMap<>();
-        //通过注解方式校验权限
-        filterMap.put("/**", "jwt");
-        chainDefinition.addPathDefinitions(filterMap);
+//        Map<String, String> filterMap = new LinkedHashMap<>();
+//        //通过注解方式校验权限
+//        filterMap.put("/**", "jwt");
+//        chainDefinition.addPathDefinitions(filterMap);
         return chainDefinition;
     }
 
