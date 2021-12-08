@@ -33,11 +33,10 @@ public class JwtFilter extends AuthenticatingFilter {
 
     @Override
     protected AuthenticationToken createToken(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
-
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String jwt = request.getHeader("Authorization");
-        // 新的Spring中StringUtils的isEmpty方法已弃用，改为hasLength()
-        if (StringUtils.hasLength(jwt)) {
+        // 新的Spring中StringUtils的isEmpty方法已弃用，改为hasLength(),注意取反
+        if (!StringUtils.hasLength(jwt)) {
             return null;
         }
         return new JwtToken(jwt);
@@ -45,32 +44,29 @@ public class JwtFilter extends AuthenticatingFilter {
 
     @Override
     protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
-
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String jwt = request.getHeader("Authorization");
-        if (StringUtils.hasLength(jwt)) {
+        if (!StringUtils.hasLength(jwt)) {
             return true;
         } else {
-            // 校验jwt
+            // 校验jwt，判断是否过期
             Claims claim = jwtUtil.getClaimByToken(jwt);
             if (claim == null || jwtUtil.isTokenExpired(claim.getExpiration())) {
                 throw new ExpiredCredentialsException("token已失效，请重新登录");
             }
-            // 执行登录
+            // 执行自动登录
             return executeLogin(servletRequest, servletResponse);
         }
     }
 
     @Override
     protected boolean onLoginFailure(AuthenticationToken token, AuthenticationException e, ServletRequest request, ServletResponse response) {
-
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-
         Throwable throwable = e.getCause() == null ? e : e.getCause();
         ResponseResult res = ResponseResult.fail(throwable.getMessage());
         String json = JSONUtil.toJsonStr(res);
-
         try {
+            //处理登录失败的异常
             httpServletResponse.getWriter().print(json);
         } catch (IOException ioException) {
             ioException.printStackTrace();
@@ -81,7 +77,6 @@ public class JwtFilter extends AuthenticatingFilter {
 
     @Override
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
-
         HttpServletRequest httpServletRequest = WebUtils.toHttp(request);
         HttpServletResponse httpServletResponse = WebUtils.toHttp(response);
         httpServletResponse.setHeader("Access-control-Allow-Origin", httpServletRequest.getHeader("Origin"));
@@ -92,7 +87,6 @@ public class JwtFilter extends AuthenticatingFilter {
             httpServletResponse.setStatus(org.springframework.http.HttpStatus.OK.value());
             return false;
         }
-
         return super.preHandle(request, response);
     }
 }

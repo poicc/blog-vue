@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.Resource;
 import javax.servlet.Filter;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -55,10 +56,10 @@ public class ShiroConfig {
     @Bean
     public ShiroFilterChainDefinition shiroFilterChainDefinition() {
         DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
-//        Map<String, String> filterMap = new LinkedHashMap<>();
-//        //通过注解方式校验权限
-//        filterMap.put("/**", "jwt");
-//        chainDefinition.addPathDefinitions(filterMap);
+        Map<String, String> filterMap = new LinkedHashMap<>();
+        //通过注解方式校验权限
+        filterMap.put("/**", "jwt");
+        chainDefinition.addPathDefinitions(filterMap);
         return chainDefinition;
     }
 
